@@ -1,4 +1,3 @@
-```markdown
 # Steam Snapshot Manager UI
 
 ## 📋 **Table des Matières**
