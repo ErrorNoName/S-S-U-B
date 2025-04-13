@@ -61,12 +61,12 @@ De plus, il intègre un mod loader/App Store spécialement pensé pour installer
 
 2. **Rendre le Script Exécutable**
    ```bash
-   chmod +x steam_manager_ui.sh
+   chmod +x S_MOD_LOADER_BETA_1.0.2.sh
    ```
 
 3. **Lancer le Script**
    ```bash
-   ./steam_manager_ui.sh
+   ./S_MOD_LOADER_BETA_1.0.2.sh
    ```
 
 ## 🛠️ Utilisation
