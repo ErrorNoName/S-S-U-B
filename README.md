@@ -1,139 +1,142 @@
 # Steam Snapshot Manager UI
 
-## 📋 **Table des Matières**
+## 📋 Table des Matières
 - [📖 Description](#-description)
 - [🚀 Fonctionnalités](#-fonctionnalités)
 - [🔧 Installation](#-installation)
-- [🛠️ Utilisation](#️-utilisation)
+- [🛠️ Utilisation](#-utilisation)
 - [⚙️ Configuration](#-configuration)
 - [🐞 Résolution des Problèmes](#-résolution-des-problèmes)
 - [⚠️ Avertissements Importants](#-avertissements-importants)
 - [📄 Licence](#-licence)
 - [🙏 Remerciements](#-remerciements)
 
-## 📖 **Description**
+## 📖 Description
 
-**Steam Snapshot Manager UI** est un script Bash destiné aux utilisateurs d'ArchLinux pour gérer facilement leurs jeux Steam.  
-Il permet de :
-- Lister vos jeux Steam installés.
-- Créer des snapshots (copies de sauvegarde) de vos jeux avec un identifiant unique basé sur la date.
-- Restaurer une version précédente en remplaçant totalement le dossier actuel du jeu.
-- Bloquer ou débloquer les mises à jour automatiques d'un jeu en modifiant le fichier manifeste Steam associé.
+**Steam Snapshot Manager UI** est un script Bash innovant conçu pour les utilisateurs d'ArchLinux qui souhaitent reprendre le contrôle de leurs jeux Steam.  
+Il propose une interface en mode texte graphique ultra conviviale grâce à **dialog**, permettant de gérer les snapshots (copies de sauvegarde) de vos jeux, de restaurer des versions antérieures et de bloquer ou débloquer les mises à jour automatiques.  
+De plus, il intègre un mod loader/App Store spécialement pensé pour installer ou noter des mods/plugins (comme pour VRChat), avec une communication automatisée via Discord pour signaler les demandes d'amélioration.
 
-Ce script utilise l'utilitaire **dialog** pour offrir une interface en mode texte graphique, simple et rapide à utiliser.
+## 🚀 Fonctionnalités
 
-## 🚀 **Fonctionnalités**
+- **Interface Graphique en Mode Texte**  
+  Une navigation intuitive via `dialog` pour accéder rapidement aux fonctionnalités.
 
-- **Interface Graphique en Mode Texte :**  
-  Une navigation intuitive grâce à `dialog` pour sélectionner vos jeux et actions.
+- **Gestion des Snapshots**  
+  - Création automatique d'un snapshot avec identifiant unique (basé sur la date et l'heure).
+  - Restauration simple et sécurisée d'une version antérieure en remplaçant entièrement le dossier du jeu.
 
-- **Gestion des Snapshots :**  
-  - Création automatique d'un snapshot avec un identifiant unique (basé sur la date et l'heure).
-  - Restauration des snapshots disponibles pour revenir à une version antérieure du jeu.
+- **Blocage/Déblocage des Mises à Jour**  
+  - Empêcher les mises à jour en rendant le fichier manifeste Steam (appmanifest_*.acf) **immutable**.
+  - Rétablir les permissions quand nécessaire.
 
-- **Blocage/Déblocage des Mises à Jour :**  
-  - Bloquer les mises à jour en rendant le fichier manifeste Steam (appmanifest_*.acf) du jeu **immutable**.
-  - Débloquer en rétablissant les permissions d'écriture.
+- **Mod Store Intégré**  
+  - Parcours et installation des mods/plugins directement depuis GitHub (branche personnalisable, par exemple "VRChat").
+  - Possibilité de noter un mod (fonctionnel ou non) et d'envoyer une demande de mise à jour via webhook Discord.
+  - Indicateurs visuels (🟢 pour à jour, 🟠 pour obsolète) basés sur la date du dernier commit.
 
-- **Opérations Sécurisées :**  
-  Confirmation avant toute opération destructrice (restauration qui supprime le dossier actuel du jeu).
+- **Opérations Sécurisées et Confirmaées**  
+  - Demande de confirmation avant toute opération destructive (par exemple, restauration de snapshot).
 
-## 🔧 **Installation**
+## 🔧 Installation
 
-### **Prérequis**
+### Prérequis
 - **Bash** (installé par défaut sur ArchLinux)
 - **dialog**  
-  Installez-le via :
+  Installez-le avec :
   ```bash
   sudo pacman -S dialog
   ```
-- **rsync** (pour la copie des dossiers)
+- **rsync** (pour la copie et la synchronisation des dossiers)
 - **chattr** (inclus dans le paquet e2fsprogs)
+- **curl**, **jq** et **unzip** (pour les appels API et le traitement des archives)
 
-### **Étapes d'Installation**
+### Étapes d'Installation
 
-1. **Cloner le Répertoire :**
+1. **Cloner le Répertoire**
    ```bash
    git clone https://github.com/ErrorNoName/S-S-U-B.git
    cd S-S-U-B
    ```
 
-2. **Rendre le Script Exécutable :**
+2. **Rendre le Script Exécutable**
    ```bash
-   chmod +x SnapSteam.sh
+   chmod +x steam_manager_ui.sh
    ```
 
-## 🛠️ **Utilisation**
-
-1. **Lancer le Script :**
+3. **Lancer le Script**
    ```bash
    ./steam_manager_ui.sh
    ```
 
-2. **Sélectionner un Jeu :**
-   - Une interface graphique en mode texte s'affichera listant tous les jeux Steam installés (par défaut dans `~/.local/share/Steam/steamapps/common`).
+## 🛠️ Utilisation
 
-3. **Choisir une Action :**
-   - **Créer un snapshot :** Sauvegarder l'état actuel du jeu.
-   - **Restaurer un snapshot :** Remplacer le dossier du jeu par une version sauvegardée.
-   - **Bloquer les mises à jour :** Rendre le manifeste du jeu immutable pour empêcher les mises à jour.
-   - **Débloquer les mises à jour :** Restaurer les permissions d'écriture sur le manifeste.
+1. **Lancement**
+   - Exécutez le script et l'interface graphique en mode texte s'affichera automatiquement.
 
-4. **Confirmer les Opérations :**
-   - Le script demande confirmation avant toute action susceptible de supprimer des données existantes.
+2. **Sélection d'un Jeu**
+   - Choisissez dans la liste le jeu Steam à gérer (il est recherché dans `~/.local/share/Steam/steamapps/common`).
 
-## ⚙️ **Configuration**
+3. **Gestion des Snapshots & Mises à Jour**
+   - **Créer un snapshot :** Sauvegarde de l'état actuel du jeu.
+   - **Restaurer un snapshot :** Remplacement complet du dossier par la version sélectionnée.
+   - **Bloquer/Débloquer les mises à jour :** Gérer le fichier manifeste pour empêcher ou permettre les mises à jour automatiques.
 
-### **Chemins Steam**
-- Par défaut, le script utilise :
-  - `STEAM_COMMON` : `~/.local/share/Steam/steamapps/common`
-  - `STEAM_APPS` : `~/.local/share/Steam/steamapps`
-- Si vos dossiers Steam sont installés ailleurs, modifiez ces variables en début de script.
+4. **Accès au Mod Store**
+   - Parcourez la liste des mods disponibles (les états sont indiqués avec des marqueurs).
+   - Après sélection, choisissez d’**installer** le mod ou de **noter** (fonctionnel/non fonctionnel) pour envoyer un retour via Discord.
+   - Vous avez également la possibilité d'envoyer une demande de mise à jour des snapshots de mods via une option dédiée.
 
-### **Répertoire des Snapshots**
-- Les snapshots sont sauvegardés dans le dossier : `~/steam_snapshots`
-- Vous pouvez modifier cette variable pour changer l'emplacement de stockage.
+## ⚙️ Configuration
 
-### **Droits Système**
-- Pour bloquer/débloquer les mises à jour, le script utilise `chattr` avec `sudo`.  
-  Assurez-vous d'avoir les droits sudo ou configurez sudo pour ne pas demander de mot de passe pour `chattr` si nécessaire.
+### Chemins Steam
+- **STEAM_COMMON** : `~/.local/share/Steam/steamapps/common`
+- **STEAM_APPS** : `~/.local/share/Steam/steamapps`
+  
+   Si vos jeux sont installés ailleurs, modifiez ces variables en début de script.
 
-## 🐞 **Résolution des Problèmes**
+### Répertoire des Snapshots
+- Par défaut, les snapshots sont enregistrés dans `~/steam_snapshots`.
+  
+  Vous pouvez modifier cette variable pour changer l'emplacement de sauvegarde.
 
-### **1. dialog n'est pas installé**
-- **Symptôme :** Le script affiche une erreur indiquant que `dialog` est introuvable.
-- **Solution :** Installez dialog avec la commande `sudo pacman -S dialog`.
+### Droits Système
+- Les opérations de blocage/déblocage reposent sur `chattr` et nécessitent l'utilisation de `sudo`.
+  Assurez-vous d’avoir les permissions nécessaires ou configurez votre sudo pour une exécution sans mot de passe pour `chattr` si besoin.
 
-### **2. Problème de Permissions sur les Fichiers Manifeste**
-- **Symptôme :** Erreur lors du blocage/déblocage des mises à jour.
-- **Solution :** Vérifiez que vous disposez des droits suffisants pour utiliser `sudo chattr`.  
-  Vous pouvez également lancer le script en tant que root, si besoin.
+## 🐞 Résolution des Problèmes
 
-### **3. Absence de Jeux dans le Répertoire**
-- **Symptôme :** Le script ne trouve aucun jeu dans le dossier `STEAM_COMMON`.
-- **Solution :** Assurez-vous que vos jeux sont installés dans le répertoire configuré ou modifiez la variable `STEAM_COMMON`.
+1. **dialog n'est pas installé**
+   - *Symptôme* : Erreur indiquant que `dialog` est introuvable.
+   - *Solution* : Installez-le avec `sudo pacman -S dialog`.
 
-## ⚠️ **Avertissements Importants**
+2. **Problème de Permissions sur les Fichiers Manifeste**
+   - *Symptôme* : Échec du blocage/déblocage des mises à jour.
+   - *Solution* : Vérifiez vos droits sudo ou exécutez le script en tant que root si nécessaire.
 
-- **Opérations Destructrices :**  
-  La restauration d’un snapshot supprime complètement le dossier actuel du jeu.  
-  **Assurez-vous de sauvegarder vos données avant toute restauration.**
+3. **Aucun Jeu Détecté**
+   - *Symptôme* : Le script ne trouve aucun jeu dans `STEAM_COMMON`.
+   - *Solution* : Vérifiez l'emplacement d'installation de vos jeux ou modifiez la variable `STEAM_COMMON`.
 
-- **Utilisation de chattr :**  
-  Le blocage des mises à jour repose sur la modification des permissions du fichier manifeste.  
-  Utilisez cette fonctionnalité avec précaution pour éviter tout problème de mise à jour futur.
+## ⚠️ Avertissements Importants
 
-- **Dépendances Système :**  
-  Le script nécessite des outils comme `dialog`, `rsync` et `chattr`. Vérifiez leur présence avant utilisation.
+- **Opérations Destructrices**  
+  La restauration d'un snapshot supprimera définitivement le dossier actuel du jeu. Sauvegardez vos données avant toute action.
 
-## 📄 **Licence**
+- **Utilisation de chattr**  
+  La fonctionnalité de blocage des mises à jour repose sur la modification des attributs système du fichier manifeste. Utilisez-la avec précaution.
+
+- **Dépendances**  
+  Assurez-vous que les outils comme `dialog`, `rsync`, `curl`, `jq`, `unzip` et `chattr` sont installés et opérationnels.
+
+## 📄 Licence
 
 Ce projet est sous licence **MIT**.  
-Voir le fichier [LICENSE](https://github.com/VotreNom/Steam-Snapshot-Manager-UI/blob/main/LICENSE) pour plus de détails.
+Consultez le fichier [LICENSE](https://github.com/ErrorNoName/S-S-U-B/blob/main/LICENSE) pour plus de détails.
 
-## 🙏 **Remerciements**
+## 🙏 Remerciements
 
-- **dialog** : Pour offrir une interface en mode texte conviviale.
-- **rsync** : Pour la gestion efficace des copies de dossiers.
-- **chattr** : Pour la sécurisation des fichiers en bloquant les mises à jour non souhaitées.
-- Merci à la communauté ArchLinux et aux utilisateurs de Steam pour leurs retours et suggestions.
+- **dialog** pour l'interface utilisateur en mode texte.
+- **rsync** pour la gestion efficace des snapshots.
+- **chattr** pour la sécurisation des mises à jour.
+- Merci à la communauté ArchLinux et aux utilisateurs de Steam pour leurs retours constructifs et leur soutien.
